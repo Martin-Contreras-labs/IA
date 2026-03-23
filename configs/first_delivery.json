@@ -1,0 +1,20 @@
+{
+  "project": {
+    "name": "RxThorax",
+    "delivery": "H1",
+    "active_dataset": "ChestX-ray14"
+  },
+  "images": {
+    "target_width": 512,
+    "target_height": 512,
+    "normalize": true
+  },
+  "baseline": {
+    "mode": "normal_vs_pathological",
+    "feature_family": "statistical",
+    "classifier": "mlp"
+  },
+  "evaluation": {
+    "metrics": ["accuracy", "sensitivity", "specificity", "f1"]
+  }
+}

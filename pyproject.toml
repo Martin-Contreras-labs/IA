@@ -1,0 +1,12 @@
+[project]
+name = "rxthorax"
+version = "0.1.0"
+description = "Arquitectura inicial en Python para diagnóstico asistido en radiografías de tórax"
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

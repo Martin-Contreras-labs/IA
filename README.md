@@ -1,26 +1,36 @@
-# Diagnóstico asistido en radiografías de tórax
+# RxThorax - Diagnóstico asistido en radiografías de tórax
 
-Este repositorio contiene la arquitectura técnica inicial del proyecto de IA para diagnóstico asistido en radiografías de tórax.
+Arquitectura técnica inicial del proyecto replanteada para **Python + PyTorch**, priorizando una **primera entrega enfocada en H1**:
+normalización de imágenes, extracción de características estadísticas y clasificación base **Normal vs Patológico**.
 
-## Alcance actual
+## Primera entrega propuesta
 
-En esta fase se define únicamente la estructura de carpetas y clases para soportar los objetivos del proyecto:
-- OE1: extracción de características estadísticas y clasificación base
-- OE2: CNN para detección/localización de patologías
-- OE3: heatmaps para interpretabilidad
-- OE4: búsqueda de casos similares mediante embeddings visuales
+La primera entrega deja preparado el proyecto para construir un baseline reproducible con estas piezas:
 
-## Estructura de alto nivel
+1. **Configuración centralizada** en `configs/first_delivery.json`.
+2. **Modelado del dominio** para estudios, etiquetas, particiones y resultados.
+3. **Capa de datos** para declarar datasets, splits y registros de radiografías.
+4. **Preprocesamiento** orientado a normalización y redimensionamiento.
+5. **Extracción de características estadísticas** para un baseline tabular.
+6. **Pipeline H1** para conectar configuración, datos, features, entrenamiento y evaluación.
+7. **Documentación** para que la siguiente iteración implemente lectura real de `ChestX-ray14` o `CheXpert`.
 
-- `src/main/java/org/ia/rxthorax/app`: puntos de entrada
-- `src/main/java/org/ia/rxthorax/config`: configuración general
-- `src/main/java/org/ia/rxthorax/domain`: entidades del dominio clínico/técnico
-- `src/main/java/org/ia/rxthorax/data`: acceso y preparación de datos
-- `src/main/java/org/ia/rxthorax/features`: extracción de características para modelos base
-- `src/main/java/org/ia/rxthorax/baseline`: pipeline H1 / OE1
-- `src/main/java/org/ia/rxthorax/cnn`: pipeline H2 / OE2
-- `src/main/java/org/ia/rxthorax/xai`: interpretabilidad H3 / OE3
-- `src/main/java/org/ia/rxthorax/retrieval`: recuperación de casos similares OE4
-- `src/main/java/org/ia/rxthorax/evaluation`: validación y análisis de errores H4
-- `src/main/java/org/ia/rxthorax/orchestration`: coordinación entre componentes
-- `docs/architecture.md`: descripción técnica de módulos y responsabilidades
+## Estructura de carpetas
+
+- `configs/`: configuración de la primera entrega.
+- `docs/`: arquitectura técnica y alcance del hito inicial.
+- `src/rxthorax/cli.py`: punto de entrada del proyecto.
+- `src/rxthorax/config/`: carga de configuración y settings.
+- `src/rxthorax/domain/`: entidades del problema clínico y experimental.
+- `src/rxthorax/data/`: catálogos, registros, particiones y contratos de datasets.
+- `src/rxthorax/preprocessing/`: normalización y resize de radiografías.
+- `src/rxthorax/features/`: extracción de características para el baseline.
+- `src/rxthorax/models/`: modelos base y espacio futuro para CNNs.
+- `src/rxthorax/evaluation/`: métricas y reportes de validación.
+- `src/rxthorax/pipelines/`: pipelines de entrenamiento/evaluación por entrega.
+
+## Enfoque tecnológico
+
+- **Lenguaje principal:** Python.
+- **Framework objetivo:** PyTorch para etapas posteriores de CNN/XAI/retrieval.
+- **En esta entrega:** solo se implementa el esqueleto del baseline H1 y su arquitectura, sin entrenamiento profundo todavía.
