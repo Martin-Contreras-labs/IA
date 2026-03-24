@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-from rxthorax.domain.results import ClassificationMetrics, PredictionResult
+from dataclasses import dataclass
+
+from rxthorax.models.logreg import PredictionResult
+
+
+@dataclass(frozen=True)
+class ClassificationMetrics:
+    accuracy: float
+    sensitivity: float
+    specificity: float
+    f1_score: float
 
 
 class MetricsEvaluator:

@@ -1,74 +1,57 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 
 from rxthorax.config.settings import ProjectSettings
 from rxthorax.data.datasets import DatasetRepository
 from rxthorax.data.splits import SplitStrategy
-from rxthorax.domain.enums import PathologyLabel
-from rxthorax.domain.records import ChestStudyRecord
-from rxthorax.domain.results import ExperimentReport
 from rxthorax.evaluation.metrics import MetricsEvaluator
-from rxthorax.features.statistics import StatisticalFeatureExtractor
-from rxthorax.models.baseline import BaselineClassifier, BaselineModelSpec
-from rxthorax.preprocessing.transforms import RadiographNormalizer, RadiographResizer
+from rxthorax.features.statistics import PreparedStudy, StatisticalFeatureExtractor
+from rxthorax.models.logreg import LogRegModel
 
 
-class FirstDeliveryPipeline:
+@dataclass(frozen=True)
+class H1Report:
+    project_name: str
+    delivery: str
+    dataset_name: str
+    summary: str
+
+
+class H1Pipeline:
     def __init__(self, settings: ProjectSettings) -> None:
         self.settings = settings
         self.dataset_repository = DatasetRepository()
         self.split_strategy = SplitStrategy()
-        self.normalizer = RadiographNormalizer()
-        self.resizer = RadiographResizer()
         self.feature_extractor = StatisticalFeatureExtractor()
-        self.classifier = BaselineClassifier(
-            BaselineModelSpec(
-                mode=settings.baseline.mode,
-                classifier=settings.baseline.classifier,
-            )
-        )
+        self.classifier = LogRegModel()
         self.metrics_evaluator = MetricsEvaluator()
 
     @classmethod
-    def from_default_config(cls) -> "FirstDeliveryPipeline":
+    def from_default_config(cls) -> "H1Pipeline":
         config_path = Path(__file__).resolve().parents[3] / "configs" / "first_delivery.json"
         settings = ProjectSettings.from_json(config_path)
         return cls(settings)
 
-    def build_demo_record(self) -> ChestStudyRecord:
+    def run_demo(self) -> H1Report:
+        dataset = self.dataset_repository.get(self.settings.active_dataset)
         study_id = "demo-study-001"
         split = self.split_strategy.assign(study_id)
-        return ChestStudyRecord(
+        prepared_study = PreparedStudy(
             study_id=study_id,
-            image_path=Path("data/demo-study-001.png"),
-            label=PathologyLabel.NORMAL,
-            split=split,
-        )
-
-    def run_demo(self) -> ExperimentReport:
-        dataset = self.dataset_repository.get(self.settings.active_dataset)
-        record = self.build_demo_record()
-        normalized = self.normalizer.apply(
-            study_id=record.study_id,
             target_width=self.settings.images.target_width,
             target_height=self.settings.images.target_height,
-            normalize=self.settings.images.normalize,
         )
-        features = self.feature_extractor.extract(normalized)
+        features = self.feature_extractor.extract(prepared_study)
         prediction = self.classifier.predict(features)
         metrics = self.metrics_evaluator.evaluate(prediction)
-        resize_step = self.resizer.describe(
-            self.settings.images.target_width,
-            self.settings.images.target_height,
-        )
         summary = (
             f"Entrega {self.settings.delivery} sobre {dataset.name}: "
-            f"{self.settings.baseline.mode}, features={self.settings.baseline.feature_family}, "
-            f"classifier={self.settings.baseline.classifier}, preprocessing={resize_step}, "
-            f"metrics={metrics}"
+            f"split={split.value}, features={self.settings.baseline.feature_family}, "
+            f"classifier=logreg, metrics={metrics}"
         )
-        return ExperimentReport(
+        return H1Report(
             project_name=self.settings.name,
             delivery=self.settings.delivery,
             dataset_name=dataset.name,
