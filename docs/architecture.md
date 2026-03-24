@@ -1,27 +1,16 @@
-# Arquitectura técnica propuesta - Opción B (Python + PyTorch)
+# Arquitectura técnica H1
 
-## 1. Objetivo del replanteamiento
+## Propósito
 
-Se migra el diseño inicial a Python porque encaja mejor con:
-- visión por computador,
-- experimentación con datasets médicos,
-- integración con PyTorch,
-- generación de heatmaps,
-- recuperación basada en embeddings.
+Describir únicamente el flujo del hito H1 para construir y evaluar un baseline binario `Normal vs Patológico`.
 
-La **primera entrega** queda acotada a **H1**:
-- normalización de radiografías,
-- extracción de características estadísticas,
-- clasificación base `Normal vs Patológico`,
-- evaluación inicial reproducible.
+## Componentes H1
 
-## 2. Capas del proyecto
+### Configuración
+- `configs/first_delivery.json`
+- Parámetros del experimento: split, etiqueta binaria, tamaño objetivo y baseline.
 
-### `config`
-Carga settings del experimento inicial: dataset, tamaño objetivo, etiqueta binaria, split y parámetros del baseline.
-
-### `domain`
-Contiene entidades transversales del problema:
+### Dominio
 - `PathologyLabel`
 - `StudySplit`
 - `ChestStudyRecord`
@@ -29,41 +18,37 @@ Contiene entidades transversales del problema:
 - `PredictionResult`
 - `ExperimentReport`
 
-### `data`
-Modela la fuente de datos y los registros de estudios radiológicos.
-En la primera entrega esta capa declara contratos y estructuras; en la siguiente debe conectarse a `ChestX-ray14` o `CheXpert`.
+### Datos
+- `DatasetSpec` para declarar el dataset activo.
+- Registros de estudios para alimentar el pipeline H1.
 
-### `preprocessing`
-Define transformaciones canónicas para radiografías:
-- normalización de intensidad,
-- resize,
-- validaciones previas.
+### Preprocesamiento
+- `RadiographNormalizer`
+- `RadiographResizer`
 
-### `features`
-Implementa el extractor estadístico que alimentará el baseline tabular.
+### Features
+- `StatisticalFeatureExtractor` para transformar imágenes en vectores numéricos.
 
-### `models`
-Agrupa modelos del sistema. En esta primera entrega solo existe el baseline binario. Más adelante se extenderá a CNNs, atención y retrieval.
+### Modelo
+- `BaselineClassifier` como clasificador binario del hito.
 
-### `evaluation`
-Consolida métricas, reportes y análisis de errores del primer hito.
+### Evaluación
+- `ClassificationMetrics` para resumen de desempeño del baseline.
 
-### `pipelines`
-Conecta módulos para ejecutar una entrega concreta. En esta fase el pipeline principal es `FirstDeliveryPipeline`.
+### Orquestación
+- `FirstDeliveryPipeline` integra configuración, datos, preprocesamiento, features, modelo y métricas.
 
-## 3. Flujo de la primera entrega
+## Flujo H1 (end-to-end)
 
-1. `FirstDeliveryPipeline` carga la configuración.
-2. `DatasetSpec` declara el dataset activo.
-3. `ChestStudyRecord` representa los estudios disponibles.
-4. `SplitStrategy` separa `train`, `validation` y `test`.
-5. `RadiographNormalizer` y `RadiographResizer` preparan las imágenes.
-6. `StatisticalFeatureExtractor` transforma la radiografía en un vector numérico.
-7. `BaselineClassifier` produce predicciones binarias.
-8. `ClassificationMetrics` resume accuracy, sensibilidad, especificidad y F1.
-9. `ExperimentReport` documenta los resultados de la entrega.
+1. `FirstDeliveryPipeline` carga configuración.
+2. Se declara el dataset y se obtienen registros de estudio.
+3. Se aplica split (`train`, `validation`, `test`).
+4. Se ejecuta normalización y resize por imagen.
+5. Se extraen características estadísticas.
+6. Se entrena/infiere con clasificador binario baseline.
+7. Se calculan métricas y se emite `ExperimentReport`.
 
-## 4. Estructura objetivo del repositorio
+## Estructura relevante del repositorio
 
 ```text
 configs/
@@ -74,36 +59,12 @@ docs/
   first_delivery.md
 
 src/rxthorax/
-  cli.py
   config/
-    settings.py
-  domain/
-    enums.py
-    records.py
-    results.py
   data/
-    catalog.py
-    datasets.py
-    splits.py
+  domain/
   preprocessing/
-    transforms.py
   features/
-    statistics.py
   models/
-    baseline.py
   evaluation/
-    metrics.py
   pipelines/
-    first_delivery.py
 ```
-
-## 5. Qué NO incluye todavía
-
-Esta primera entrega **no** implementa aún:
-- lectura real del dataset desde disco,
-- entrenamiento con PyTorch,
-- CNNs para neumonía u opacidades,
-- Grad-CAM,
-- retrieval por embeddings.
-
-Sí deja preparado el diseño para agregar esas piezas en siguientes iteraciones sin reorganizar el proyecto completo.

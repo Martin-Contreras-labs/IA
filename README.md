@@ -1,36 +1,37 @@
-# RxThorax - Diagnóstico asistido en radiografías de tórax
+# RxThorax - Hito H1
 
-Arquitectura técnica inicial del proyecto replanteada para **Python + PyTorch**, priorizando una **primera entrega enfocada en H1**:
-normalización de imágenes, extracción de características estadísticas y clasificación base **Normal vs Patológico**.
+> Documento principal del hito: [Primera entrega (H1)](docs/first_delivery.md)
 
-## Primera entrega propuesta
+## Definición (H1)
 
-La primera entrega deja preparado el proyecto para construir un baseline reproducible con estas piezas:
+H1 define un baseline mínimo y reproducible para clasificación binaria en radiografías de tórax: **Normal vs Patológico**.
 
-1. **Configuración centralizada** en `configs/first_delivery.json`.
-2. **Modelado del dominio** para estudios, etiquetas, particiones y resultados.
-3. **Capa de datos** para declarar datasets, splits y registros de radiografías.
-4. **Preprocesamiento** orientado a normalización y redimensionamiento.
-5. **Extracción de características estadísticas** para un baseline tabular.
-6. **Pipeline H1** para conectar configuración, datos, features, entrenamiento y evaluación.
-7. **Documentación** para que la siguiente iteración implemente lectura real de `ChestX-ray14` o `CheXpert`.
+## Objetivos (H1)
 
-## Estructura de carpetas
+1. Establecer una ejecución reproducible mediante configuración (`configs/first_delivery.json`).
+2. Estandarizar preprocesamiento básico (normalización y resize).
+3. Generar características estadísticas para representar cada estudio.
+4. Entrenar y evaluar un clasificador base binario.
 
-- `configs/`: configuración de la primera entrega.
-- `docs/`: arquitectura técnica y alcance del hito inicial.
-- `src/rxthorax/cli.py`: punto de entrada del proyecto.
-- `src/rxthorax/config/`: carga de configuración y settings.
-- `src/rxthorax/domain/`: entidades del problema clínico y experimental.
-- `src/rxthorax/data/`: catálogos, registros, particiones y contratos de datasets.
-- `src/rxthorax/preprocessing/`: normalización y resize de radiografías.
-- `src/rxthorax/features/`: extracción de características para el baseline.
-- `src/rxthorax/models/`: modelos base y espacio futuro para CNNs.
-- `src/rxthorax/evaluation/`: métricas y reportes de validación.
-- `src/rxthorax/pipelines/`: pipelines de entrenamiento/evaluación por entrega.
+## Datos (H1)
 
-## Enfoque tecnológico
+- El alcance H1 trabaja sobre la abstracción de estudios radiológicos (`ChestStudyRecord`) y particiones (`train`, `validation`, `test`).
+- El pipeline está preparado para consumir registros ya definidos por la capa de datos.
+- El objetivo de etiqueta en H1 es únicamente binario: `Normal` o `Patológico`.
 
-- **Lenguaje principal:** Python.
-- **Framework objetivo:** PyTorch para etapas posteriores de CNN/XAI/retrieval.
-- **En esta entrega:** solo se implementa el esqueleto del baseline H1 y su arquitectura, sin entrenamiento profundo todavía.
+## Ejemplo de baseline: Regresión Logística (LogReg)
+
+Flujo resumido del baseline H1:
+
+1. Cargar configuración del experimento.
+2. Aplicar preprocesamiento de imagen (normalización + resize).
+3. Extraer vector de características estadísticas.
+4. Entrenar un clasificador LogReg `Normal vs Patológico`.
+5. Reportar métricas de clasificación del hito.
+
+## Fuera de alcance H1
+
+- Modelos CNN y variantes profundas.
+- Explicabilidad visual (p. ej., heatmaps).
+- Retrieval por embeddings.
+- Desarrollo de hitos posteriores H2/H3/H4.
