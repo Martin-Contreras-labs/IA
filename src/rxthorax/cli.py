@@ -1,8 +1,8 @@
-from rxthorax.pipelines.first_delivery import FirstDeliveryPipeline
+from rxthorax.pipelines.h1_pipeline import H1Pipeline
 
 
 def main() -> None:
-    pipeline = FirstDeliveryPipeline.from_default_config()
+    pipeline = H1Pipeline.from_default_config()
     print(pipeline.describe())
 
 
