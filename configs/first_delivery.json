@@ -12,7 +12,7 @@
   "baseline": {
     "mode": "normal_vs_pathological",
     "feature_family": "statistical",
-    "classifier": "mlp"
+    "classifier": "logreg"
   },
   "evaluation": {
     "metrics": ["accuracy", "sensitivity", "specificity", "f1"]
