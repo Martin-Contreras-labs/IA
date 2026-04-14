@@ -1,0 +1,5 @@
+Mejoras al modelo:
+-Usar bounding boxes..., revisar en el dataset si hay alguna considerada.
+-Agregar modelo CLIP para procesar imágenes
+-Meter MLP, restringer cantidad de neuronas
+Revisar los labs 4 y 5
